@@ -98,44 +98,34 @@ public class Login extends JFrame {
                 boolean phoneFlag = false;
                 boolean passwordFlag = false;
 
-                if (userPhone.equals("admin") && password.equals("admin")) {
-                    JOptionPane.showMessageDialog(null, "Login Successful");
+                // Code to read from file
+                File userFile = new File("src/Data/" + userPhone + ".txt");
+                try {
+                    Scanner sc = new Scanner(userFile);
+                    while (sc.hasNextLine()) {
+                        String line = sc.nextLine();
+                        if (line.equals(userPhone)){
+                            phoneFlag = true;
+                        }
+
+                        if (line.equals(password)){
+                            passwordFlag = true;
+                        }
+                    }
+                } catch (FileNotFoundException ee) {
+                    userTextField.setText("");
+                    userPassword.setText("");
+                }
+
+                if (phoneFlag && passwordFlag ){
                     dispose();
                     UserAccount user = new UserAccount();
                     user.setVisible(true);
-
-                } else {
-
-                    // Code to read from file
-                    File userFile = new File("src/Data/" + userPhone + ".txt");
-                    try {
-                        Scanner sc = new Scanner(userFile);
-                        while (sc.hasNextLine()) {
-                            String line = sc.nextLine();
-                            if (line.equals(userPhone)){
-                                phoneFlag = true;
-                            }
-
-                            if (line.equals(password)){
-                                passwordFlag = true;
-                            }
-                        }
-                    } catch (FileNotFoundException ee) {
-                        userTextField.setText("");
-                        userPassword.setText("");
-                    }
-
-                    if (phoneFlag && passwordFlag ){
-                        dispose();
-                        JOptionPane.showMessageDialog(null,"Login Successful");
-                        UserAccount user = new UserAccount();
-                        user.setVisible(true);
-                    }
-                    else {
-                        JOptionPane.showMessageDialog(null, "Invalid Number or Password");
-                        userTextField.setText("");
-                        userPassword.setText("");
-                    }
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Invalid Number or Password","Warring",0);
+                    userTextField.setText("");
+                    userPassword.setText("");
                 }
             }
         });

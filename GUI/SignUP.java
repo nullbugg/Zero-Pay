@@ -7,8 +7,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-
 
 public class SignUP extends JFrame {
 
@@ -156,9 +154,9 @@ public class SignUP extends JFrame {
                 String rePassword = userRe_Password.getText();
 
                 if (password.isEmpty() || rePassword.isEmpty() || phone.isEmpty() || name.isEmpty() || email.isEmpty()){
-                    JOptionPane.showMessageDialog(null, "Invalid Input","Warring",2);
+                    JOptionPane.showMessageDialog(null, "Invalid Input","Warring",0);
                 }else if (phone.length() != 11){
-                    JOptionPane.showMessageDialog(null, "Phone number must be 11 digit!","Warring",2);
+                    JOptionPane.showMessageDialog(null, "Phone number must be 11 digit!","Warring",0);
                 }
                 else if (password.equals(rePassword)){
 
@@ -185,7 +183,7 @@ public class SignUP extends JFrame {
                         String s = Double.toString(x);
                         fileWriter.write(s);
                         fileWriter.write("\n");
-                        fileWriter.write("Deposit "+s);
+                        fileWriter.write("Bonus from Zero Pay: $"+s);
                         fileWriter.close();
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
@@ -196,7 +194,7 @@ public class SignUP extends JFrame {
                     login.setVisible(true);
 
                 } else {
-                    JOptionPane.showMessageDialog(null, "Password don't match","Warring",2);
+                    JOptionPane.showMessageDialog(null, "Password don't match","Warring",0);
                     userPassword.setText("");
                     userRe_Password.setText("");
 

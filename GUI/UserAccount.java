@@ -15,10 +15,8 @@ public class UserAccount extends JFrame {
     private JLabel accountHolderName,copyRight;
     private JButton transaction,deposit,withdraw,sendMoney,deleteAccount,logOut,myBalance;
     private Cursor cursor;
-    private JCheckBox showPasswordCheckBox;
 
     String phone = Login.userPhone;
-//    String phone = "01777292436";
     String acNumber = "";
     String inputPass = "";
     String inputDeposit = "",withdrawAmount = "";
@@ -40,7 +38,6 @@ public class UserAccount extends JFrame {
         // Variables
         Container container = this.getContentPane();
         container.setBackground(Color.LIGHT_GRAY);
-//        container.setBackground(new Color(195, 188, 188));
         container.setLayout(null);
 
         cursor = new Cursor(Cursor.HAND_CURSOR);
@@ -62,6 +59,7 @@ public class UserAccount extends JFrame {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
 
         // ACCOUNT HOLDER NAME
         accountHolderName = new JLabel();
@@ -113,7 +111,7 @@ public class UserAccount extends JFrame {
                     throw new RuntimeException(ex);
                 }
 
-                JOptionPane.showMessageDialog(null, "\nCurrent Balance: " + mainBalance,"Balance",JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(null, "\nCurrent Balance: $" + mainBalance,"Balance",JOptionPane.PLAIN_MESSAGE);
             }
         });
 
@@ -130,87 +128,91 @@ public class UserAccount extends JFrame {
 
                 boolean finalFlag = false;
 
+                acNumber = JOptionPane.showInputDialog("Account Number");
 
-                while(true){
-                    acNumber = JOptionPane.showInputDialog("Account Number");
+                if (acNumber.equals(phone)){
+                    JOptionPane.showMessageDialog(null, "You can't send-money on your own account!", "Warring", 0);
+                }
+                else{
                     File file = new File("src/Data/" + acNumber + ".txt");
                     try {
                         Scanner sc = new Scanner(file);
                         finalFlag = true;
-                        break;
                     } catch (FileNotFoundException ex) {
                         finalFlag = false;
                         JOptionPane.showMessageDialog(null, " Invalid Acccount Number!", "Warring", 2);
                     }
-                }
 
-                if (finalFlag){
-                    boolean amountFlag = false;
-                    while (true){
-                        sendAmount = JOptionPane.showInputDialog("Amount");
-                        if (checkAmount(sendAmount)){
-                            amountFlag = true;
-                            break;
-                        }
-                        else {
-                            JOptionPane.showMessageDialog(null, "Invalid Amount!","Warring",2);
-                        }
-                    }
-
-                    while (true){
-                        inputPass = JOptionPane.showInputDialog("Confirm Your Password");
-                        if (checkPass()){
+                    if (finalFlag){
+                        boolean amountFlag = false;
+                        while (true){
+                            sendAmount = JOptionPane.showInputDialog("Amount");
                             double x = Double.parseDouble(sendAmount);
-                            mainBalance -= x;
-                            String updateBalance ="";
-                            updateBalance = Double.toString(mainBalance);
-                            updateFile(phone);
-                            try {
-                                FileWriter fileWriter = new FileWriter(file);
-                                fileWriter.write(uName);
-                                fileWriter.write("\n");
-                                fileWriter.write(uEmail);
-                                fileWriter.write("\n");
-                                fileWriter.write(uPhone);
-                                fileWriter.write("\n");
-                                fileWriter.write(uPassword);
-                                fileWriter.write("\n");
-                                fileWriter.write(updateBalance);
-                                fileWriter.write("\n");
-                                fileWriter.write("Send Money " + sendAmount);
-                                fileWriter.write("\n");
-                                fileWriter.close();
-                            } catch (IOException ex) {
-                                throw new RuntimeException(ex);
+                            if (checkAmount(sendAmount) && x > 0){
+                                amountFlag = true;
+                                break;
                             }
-
-                            updateFile(acNumber);
-                            File file2 = new File("src/Data/" + acNumber + ".txt");
-                            try {
-                                FileWriter fileWriter = new FileWriter(file2);
-                                fileWriter.write(uName);
-                                fileWriter.write("\n");
-                                fileWriter.write(uEmail);
-                                fileWriter.write("\n");
-                                fileWriter.write(uPhone);
-                                fileWriter.write("\n");
-                                fileWriter.write(uPassword);
-                                fileWriter.write("\n");
-                                double temp = Double.parseDouble(uAmount) + x;
-                                String s = Double.toString(temp);
-                                fileWriter.write(s);
-                                fileWriter.write("\n");
-                                fileWriter.write("Received Money " + sendAmount);
-                                fileWriter.write("\n");
-                                fileWriter.close();
-                            } catch (IOException ex) {
-                                throw new RuntimeException(ex);
+                            else {
+                                JOptionPane.showMessageDialog(null, "Invalid Amount!","Warring",2);
                             }
-                            JOptionPane.showMessageDialog(null, "Successfully!");
-                            break;
                         }
-                        else {
-                            JOptionPane.showMessageDialog(null, "Incorrect Password!");
+                        int count = 0;
+                        while (count < 3){
+                            count++;
+                            inputPass = JOptionPane.showInputDialog("Confirm Your Password");
+                            if (checkPass()){
+                                double x = Double.parseDouble(sendAmount);
+                                mainBalance -= x;
+                                String updateBalance ="";
+                                updateBalance = Double.toString(mainBalance);
+                                updateFile(phone);
+                                try {
+                                    FileWriter fileWriter = new FileWriter(file);
+                                    fileWriter.write(uName);
+                                    fileWriter.write("\n");
+                                    fileWriter.write(uEmail);
+                                    fileWriter.write("\n");
+                                    fileWriter.write(uPhone);
+                                    fileWriter.write("\n");
+                                    fileWriter.write(uPassword);
+                                    fileWriter.write("\n");
+                                    fileWriter.write(updateBalance);
+                                    fileWriter.write("\n");
+                                    fileWriter.write("Send Money: $" + sendAmount);
+                                    fileWriter.write("\n");
+                                    fileWriter.close();
+                                } catch (IOException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+
+                                updateFile(acNumber);
+                                File file2 = new File("src/Data/" + acNumber + ".txt");
+                                try {
+                                    FileWriter fileWriter = new FileWriter(file2);
+                                    fileWriter.write(uName);
+                                    fileWriter.write("\n");
+                                    fileWriter.write(uEmail);
+                                    fileWriter.write("\n");
+                                    fileWriter.write(uPhone);
+                                    fileWriter.write("\n");
+                                    fileWriter.write(uPassword);
+                                    fileWriter.write("\n");
+                                    double temp = Double.parseDouble(uAmount) + x;
+                                    String s = Double.toString(temp);
+                                    fileWriter.write(s);
+                                    fileWriter.write("\n");
+                                    fileWriter.write("Received Money: $" + sendAmount);
+                                    fileWriter.write("\n");
+                                    fileWriter.close();
+                                } catch (IOException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                                JOptionPane.showMessageDialog(null, "Successfully!");
+                                break;
+                            }
+                            else {
+                                JOptionPane.showMessageDialog(null, "Incorrect Password!");
+                            }
                         }
                     }
                 }
@@ -229,30 +231,35 @@ public class UserAccount extends JFrame {
         deposit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                inputDeposit = JOptionPane.showInputDialog("Deposit Amount");
-                mainBalance += Double.parseDouble(inputDeposit);
-
-                updateFile(phone);
-                try {
-                    FileWriter fileWriter = new FileWriter(file);
-                    fileWriter.write(uName);
-                    fileWriter.write("\n");
-                    fileWriter.write(uEmail);
-                    fileWriter.write("\n");
-                    fileWriter.write(uPhone);
-                    fileWriter.write("\n");
-                    fileWriter.write(uPassword);
-                    fileWriter.write("\n");
-                    String s = Double.toString(mainBalance);
-                    fileWriter.write(s);
-                    fileWriter.write("\n");
-                    fileWriter.write("Deposit " + inputDeposit);
-                    fileWriter.write("\n");
-                    fileWriter.close();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                inputDeposit = JOptionPane.showInputDialog(null,"Deposit Amount","Input",JOptionPane.PLAIN_MESSAGE);
+                double temp = Double.parseDouble(inputDeposit);
+                if (temp > 0){
+                    mainBalance += temp;
+                    updateFile(phone);
+                    try {
+                        FileWriter fileWriter = new FileWriter(file);
+                        fileWriter.write(uName);
+                        fileWriter.write("\n");
+                        fileWriter.write(uEmail);
+                        fileWriter.write("\n");
+                        fileWriter.write(uPhone);
+                        fileWriter.write("\n");
+                        fileWriter.write(uPassword);
+                        fileWriter.write("\n");
+                        String s = Double.toString(mainBalance);
+                        fileWriter.write(s);
+                        fileWriter.write("\n");
+                        fileWriter.write("Deposit: $" + inputDeposit);
+                        fileWriter.write("\n");
+                        fileWriter.close();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    JOptionPane.showMessageDialog(null, "Deposit Successful");
+                }else{
+                    JOptionPane.showMessageDialog(null, "Invalid Amount!","Warring",2);
                 }
-                JOptionPane.showMessageDialog(null, "Deposit Successful");
+
             }
         });
 
@@ -270,18 +277,24 @@ public class UserAccount extends JFrame {
 
                 boolean flag = false;
                 while (true){
-                    withdrawAmount = JOptionPane.showInputDialog("Amount");
-                    if (checkAmount(withdrawAmount)){
-                        flag = true;
-                        break;
+                    withdrawAmount = JOptionPane.showInputDialog(null,"Amount","Input",-1);
+                    double temp = Double.parseDouble(withdrawAmount);
+                    if (checkAmount(withdrawAmount) && temp > 0){
+                        if (temp < 10){
+                            JOptionPane.showMessageDialog(null, "Minimum Withdrawal Amount is $10","Warring",0);
+                        }else{
+                            flag = true;
+                            break;
+                        }
+
                     }
                     else {
-                        JOptionPane.showMessageDialog(null, "Invalid Amount!","Warring",2);
+                        JOptionPane.showMessageDialog(null, "Invalid Amount!","Warring",0);
                     }
                 }
                 if (flag){
                     while (true){
-                        inputPass = JOptionPane.showInputDialog("Confirm Your Password");
+                        inputPass = JOptionPane.showInputDialog(null,"Confirm Your Password","Input",-1);
                         if (checkPass()){
                             double x = Double.parseDouble(withdrawAmount);
                             mainBalance -= x;
@@ -299,17 +312,17 @@ public class UserAccount extends JFrame {
                                 String s = Double.toString(mainBalance);
                                 fileWriter.write(s);
                                 fileWriter.write("\n");
-                                fileWriter.write("Withdraw " + withdrawAmount);
+                                fileWriter.write("Withdraw: $" + withdrawAmount);
                                 fileWriter.write("\n");
                                 fileWriter.close();
                             } catch (IOException ex) {
                                 throw new RuntimeException(ex);
                             }
-                            JOptionPane.showMessageDialog(null, "Withdraw Successful");
+                            JOptionPane.showMessageDialog(null, "Withdraw Successful!","Message",1);
                             break;
                         }
                         else {
-                            JOptionPane.showMessageDialog(null, "Incorrect Password!");
+                            JOptionPane.showMessageDialog(null, "Incorrect Password!","Warring",0);
                         }
                     }
                 }
@@ -319,7 +332,7 @@ public class UserAccount extends JFrame {
 
         // ALL TRANSACTION OPTION
 
-        transaction = new JButton("All Transaction");
+        transaction = new JButton("Last Transaction");
         transaction.setBounds(3, 290, 200, 120);
         container.add(transaction);
         transaction.setFont(fontThree);
@@ -374,11 +387,11 @@ public class UserAccount extends JFrame {
                             login.setVisible(true);
                         }
                     } catch (Exception ex){
-                        JOptionPane.showMessageDialog(null, "Account Delete Unsuccessfully");
+                        JOptionPane.showMessageDialog(null, "Account Delete Unsuccessfully","Warring",-1);
                     }
                 }
                 else{
-                    JOptionPane.showMessageDialog(null, "Incorrect Password!");
+                    JOptionPane.showMessageDialog(null, "Incorrect Password!","Warring",0);
                 }
 
             }
@@ -392,7 +405,7 @@ public class UserAccount extends JFrame {
         copyRight.setBounds(130, 420, 300, 20);
         container.add(copyRight);
 
-
+        JOptionPane.showMessageDialog(null,"Login Successful");
     }
 
     public boolean checkAmount(String newAmount){
